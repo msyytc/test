@@ -39,6 +39,16 @@
             color: #fff;
             transform: translate(-50%, -50%)
         }
+        .reload{
+            width: 100px;
+            height: 30px;
+            background-color: hotpink;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            line-height: 30px;
+        }
     </style>
 </head>
 
@@ -48,11 +58,18 @@
         <div class="button">
             点我开始<br>没法坚持30秒<br>可以找我开会员<br/>哈哈
         </div>
+        <div class="reload">
+            重新开始
+        </div>
     </div>
     <script>
         var cvs = document.querySelector('#cvs')
         var ctx = cvs.getContext('2d');
         var btn = document.querySelector('.button')
+        var reload = document.querySelector('.reload')
+        reload.onclick=function(){
+            window.location.reload();
+        }
         var flag = 1;
         imgLoad({
             bird: './img/bird.png',
@@ -65,7 +82,7 @@
             btn.onclick = function () {
                 flag -= 1;
                 //点击之后,隐藏按钮
-                this.style.display='none';
+                this.style.display = 'none';
             }
         });
 
@@ -147,9 +164,10 @@
 
             //定时器,来更新画布中的元素
             timer();
-            function timer () {
+
+            function timer() {
                 var timer = setInterval(function () {
-                    if(flag){
+                    if (flag) {
                         //每次循环的时候清除一下画布
                         ctx.clearRect(0, 0, cvs.width, cvs.height);
                         sky.init();
