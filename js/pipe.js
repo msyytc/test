@@ -25,7 +25,7 @@ var Pipe = (function (window) {
         this.x = option.x || 200;
         // this.y=option.y;
         this.spead = option.spead || 4;
-        this.speadA = option.speadA || 0;
+        this.speadA = option.speadA || 0.01;
         this.pipeW = option.pipeW || 200;
         this.pipeH = option.pipeH || 100;
 
@@ -65,6 +65,7 @@ var Pipe = (function (window) {
         },
         updata: function () {
             this.x-=this.spead;
+            this.spead+=this.speadA;
             if(this.x<-this.pipeDownImg.width){
                 this.x+=this.pipeDownImg.width + this.total * 200;
                 // console.log(this.total);

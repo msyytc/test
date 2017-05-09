@@ -12,31 +12,48 @@
     <script src="./js/pipe.js"></script>
     <script src='./js/timer.js'></script>
     <style>
-        /*@media all and (orientation:landscape){
-            body{
-                width: 100%;
-                height: 100%;
-            }
-             #cvs {
-                width: 100%;
-                height: 100%;
-            }
-        }*/
-
         @media screen and (max-width:970px) {
             #cvs {
                 width: 100%;
                 height: 100%;
             }
         }
+
+        .box {
+            display: inline-block;
+            position: relative;
+        }
+
+        .button {
+            width: 200px;
+            height: 88px;
+            background-color: yellowgreen;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            cursor: pointer;
+            text-align: center;
+            padding-top: 40px;
+            /*line-height: 88px;*/
+            border-radius: 50%;
+            color: #fff;
+            transform: translate(-50%, -50%)
+        }
     </style>
 </head>
 
 <body>
-    <canvas id="cvs"></canvas>
+    <div class="box">
+        <canvas id="cvs"></canvas>
+        <div class="button">
+            点我开始<br>没法坚持30秒<br>可以找我开会员<br/>哈哈
+        </div>
+    </div>
     <script>
         var cvs = document.querySelector('#cvs')
-        var ctx = cvs.getContext('2d')
+        var ctx = cvs.getContext('2d');
+        var btn = document.querySelector('.button')
+        var flag = 1;
         imgLoad({
             bird: './img/bird.png',
             land: './img/land.png',
@@ -45,6 +62,11 @@
             'sky': './img/sky.png'
         }, function (imgObj) {
             main(imgObj);
+            btn.onclick = function () {
+                flag -= 1;
+                //点击之后,隐藏按钮
+                this.style.display='none';
+            }
         });
 
 
@@ -117,39 +139,39 @@
             })
 
 
-
+            //定义一个自执行函数执行一次定时器,初始化一次页面
+            // (function(){
+            //     timer()
+            //     clearTimeout(timer)
+            // })()
 
             //定时器,来更新画布中的元素
-            var timer = setInterval(function () {
-                //这里画出天空和大地的限制路径
+            timer();
+            function timer () {
+                var timer = setInterval(function () {
+                    if(flag){
+                        //每次循环的时候清除一下画布
+                        ctx.clearRect(0, 0, cvs.width, cvs.height);
+                        sky.init();
+                        //绘制天空大地的限制路径
+                        ctx.rect(0, -10, imgObj.sky.width, 10)
+                        ctx.rect(0, imgObj.sky.height - imgObj.land.height, imgObj.sky.width, 40)
 
-
-                //每次循环的时候清除一下画布
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
-
-
-
-                sky.init();
-                //绘制天空大地的限制路径
-                ctx.rect(0, -10, imgObj.sky.width, 10)
-                ctx.rect(0, imgObj.sky.height - imgObj.land.height, imgObj.sky.width, 40)
-
-                allObj.forEach(function (obj, i) {
-                    if (judge()) {
-                        clearInterval(timer);
+                        allObj.forEach(function (obj, i) {
+                            if (judge()) {
+                                clearInterval(timer);
+                            }
+                            obj.init();
+                        })
+                        land.init();
+                        bird.init();
+                        duration.init();
+                        //让flag--使其等于0 ;终止渲染,初始化页面
+                        flag--;
                     }
-                    obj.init();
-                })
-                land.init();
-                bird.init();
-                duration.init();
-
-
-
-            }, 1000 / 30)
+                }, 1000 / 30)
+            }
         }
-
-
         //判断小鸟是否碰到所画的路径
         function judge() {
             var bird = new Bird();
