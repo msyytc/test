@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./js/unity.js"></script>
+    <script src="./js/sky.js"></script>
+    <script src="./js/bird.js"></script>
+    <script src="./js/pipe.js"></script>
+    <script src='./js/timer.js'></script>
+</head>
+
+<body>
+    <canvas id="cvs"></canvas>
+    <script>
+        var cvs = document.querySelector('#cvs')
+        var ctx = cvs.getContext('2d')
+        imgLoad({
+            bird: './img/bird.png',
+            land: './img/land.png',
+            pipeDown: './img/pipeDown.png',
+            pipeUp: './img/pipeUp.png',
+            'sky': './img/sky.png'
+        }, function (imgObj) {
+
+            main(imgObj);
+            // console.log(imgObj);
+
+
+        });
+
+
+
+        function main(imgObj) {
+            cvs.width = imgObj.sky.width;
+            cvs.height = imgObj.sky.height
+            // ctx.drawImage(imgObj.sky, 0, 0)
+
+
+
+            //添加一个定时器,让所建的对象循环载入
+
+            //绘制sky 背景
+            var sky = new Sky({
+                img: imgObj.sky,
+                ctx: ctx,
+                width: imgObj.sky.width,
+                height: imgObj.sky.height
+            })
+            // sky.draw();
+            // sky.updata();
+
+
+
+
+            //设置大地背景
+            var land = new Sky({
+                img: imgObj.land,
+                ctx: ctx,
+                width: imgObj.sky.width,
+                height: imgObj.sky.height,
+                y: imgObj.sky.height - imgObj.land.height
+            })
+
+
+            // 绘制小鸟
+            var bird = new Bird({
+                ctx: ctx,
+                img: imgObj.bird,
+            })
+
+
+            //在大地前边绘制管道,可以用大地覆盖住底部的管道
+            //绘制管道
+            var index = 0;
+            // var pipe = new Pipe({
+            //     ctx: ctx,
+            //     pipeDownImg: imgObj.pipeDown,
+            //     pipeUpImg: imgObj.pipeUp,
+            //     x: 200 + imgObj.pipeDown.width + index * 200
+            // })
+            // var pipe1 = new Pipe({
+            //     ctx: ctx,
+            //     pipeDownImg: imgObj.pipeDown,
+            //     pipeUpImg: imgObj.pipeUp,
+            //     x: 200 + imgObj.pipeDown.width + 1 * (200)
+            // })
+
+            //定义total.来统计需要多少个管道才可以实现无缝滚动
+            var total = Math.ceil(imgObj.sky.width / (imgObj.pipeDown.width + 200)) + 1;
+            // console.log(total);
+            //定义一个数组,来储存创建的管道
+            var allObj = [];
+            for (var i = 0; i < total; i++) {
+                index++;
+                allObj.push(new Pipe({
+                    ctx: ctx,
+                    pipeDownImg: imgObj.pipeDown,
+                    pipeUpImg: imgObj.pipeUp,
+                    x: 400 + imgObj.pipeDown.width + index * 200,
+                    total: total
+                }))
+            }
+
+            //绘制持续时间的文字
+
+            var duration = new Duration({
+                ctx: ctx,
+                x: imgObj.sky.width,
+                y: 0
+            })
+
+
+
+
+            //定时器,来更新画布中的元素
+            var timer = setInterval(function () {
+                //这里画出天空和大地的限制路径
+
+
+                //每次循环的时候清除一下画布
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+
+
+                sky.init();
+                //绘制天空大地的限制路径
+                ctx.rect(0, -10, imgObj.sky.width, 10)
+                ctx.rect(0, imgObj.sky.height - imgObj.land.height, imgObj.sky.width, 40)
+
+                allObj.forEach(function (obj, i) {
+                    if (judge()) {
+                        clearInterval(timer);
+                    }
+                    obj.init();
+                })
+                land.init();
+                bird.init();
+                duration.init();
+
+
+
+            }, 1000 / 30)
+        }
+
+
+        //判断小鸟是否碰到所画的路径
+        function judge() {
+            var bird = new Bird();
+            // console.log(bird.x+bird.img.width/6,bird.y+bird.img.height/2);
+            if (ctx.isPointInPath(bird.x + bird.img.width / 6, bird.y + bird.img.height / 2)) {
+                // console.log('鸟死了');
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
