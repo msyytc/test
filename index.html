@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="./js/unity.js"></script>
@@ -11,6 +11,25 @@
     <script src="./js/bird.js"></script>
     <script src="./js/pipe.js"></script>
     <script src='./js/timer.js'></script>
+    <style>
+        @media all and (orientation:landscape){
+            body{
+                width: 100%;
+                height: 100%;
+            }
+             #cvs {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        @media screen and (max-width:1070px) {
+            #cvs {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -25,11 +44,7 @@
             pipeUp: './img/pipeUp.png',
             'sky': './img/sky.png'
         }, function (imgObj) {
-
             main(imgObj);
-            // console.log(imgObj);
-
-
         });
 
 
@@ -76,18 +91,6 @@
             //在大地前边绘制管道,可以用大地覆盖住底部的管道
             //绘制管道
             var index = 0;
-            // var pipe = new Pipe({
-            //     ctx: ctx,
-            //     pipeDownImg: imgObj.pipeDown,
-            //     pipeUpImg: imgObj.pipeUp,
-            //     x: 200 + imgObj.pipeDown.width + index * 200
-            // })
-            // var pipe1 = new Pipe({
-            //     ctx: ctx,
-            //     pipeDownImg: imgObj.pipeDown,
-            //     pipeUpImg: imgObj.pipeUp,
-            //     x: 200 + imgObj.pipeDown.width + 1 * (200)
-            // })
 
             //定义total.来统计需要多少个管道才可以实现无缝滚动
             var total = Math.ceil(imgObj.sky.width / (imgObj.pipeDown.width + 200)) + 1;
